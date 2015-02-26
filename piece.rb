@@ -14,6 +14,10 @@ class Piece
     [pos[0] + delta[0], pos[1] + delta[1]]
   end
 
+  def self.subtract(pos, delta)
+    [pos[0] - delta[0], pos[1] - delta[1]]
+  end
+
   def self.times(delta, multiplier)
     delta.map { |el| el* multiplier }
   end
@@ -43,9 +47,7 @@ class Piece
   def jump_moves
     jumps = []
     move_deltas.each do |delta|
-      legal_jump?(delta)
-      unless board.empty?(Piece.sum(pos, delta)) ||
-             board[Piece.sum(pos, delta)].color == color
+      if legal_jump?(delta)
        jumps << Piece.sum(pos, delta)
       end
     end

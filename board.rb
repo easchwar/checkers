@@ -1,3 +1,4 @@
+require_relative './errors'
 require_relative './piece'
 require 'colorize'
 
@@ -27,12 +28,19 @@ class Board
   end
 
   def slide_piece(start_pos, end_pos)
+    unless self[start_pos].slide_moves.include?(end_pos)
+      raise MoveError.new("Illegal Move")
+    end
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[end_pos].pos = end_pos
   end
 
-  def jump_piece(start_pos, jump_pos, end_pos)
+  def jump_piece(start_pos, jump_pos)
+    unless self[start_pos].jump_moves.include?(jump_pos)
+      raise MoveError.new("Illegal Jump")
+    end
+    end_pos = Piece.sum(jump_pos, Piece.subtract(jump_pos,start_pos))
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[jump_pos] = nil
@@ -44,8 +52,11 @@ class Board
   end
 
   def render
-    render_string = ""
+    render_string = "  "
+    render_string << ("0".."7").to_a.join(" ")
+    render_string << "\n"
     @grid.each_with_index do |row, row_idx|
+      render_string << "#{row_idx} "
       row.each_index do |col_idx|
         pos = [row_idx, col_idx]
         output = (empty?(pos) ? "  " : self[pos].symbol + " ")
@@ -58,8 +69,8 @@ class Board
   end
 
   def populate_board
-    self[[0,0]] = Piece.new([0,0], :red, self)
-    self[[1,1]] = Piece.new([1,1], :black, self)
+    self[[1,1]] = Piece.new([1,1], :red, self)
+    self[[2,2]] = Piece.new([2,2], :black, self)
   end
 end
 
