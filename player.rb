@@ -8,11 +8,11 @@ class Player
     begin
       make_move(get_move(board), board)
     rescue MoveError => e
-      board.render
+      board.show
       puts e
       retry
     rescue ParsingError =>
-      board.render
+      board.show
       puts e
       retry
     end

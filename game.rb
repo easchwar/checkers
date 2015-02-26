@@ -14,11 +14,11 @@ class Game
 
   def play
     until @board.over?
-      @board.render
+      @board.show
       @players[@turn].play_turn(@board)
       switch_turn
     end
-    @board.render
+    @board.show
     puts "#{@turn} lost!"
   end
 

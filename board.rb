@@ -119,7 +119,7 @@ class Board
     BOARD_SIZE
   end
 
-  def render
+  def show
     render_string = "  "
     render_string << ("0".."7").to_a.join(" ")
     render_string << "\n"
@@ -154,9 +154,9 @@ if __FILE__ == $PROGRAM_NAME
   # b[[2,3]] = Piece.new([2,3],:red, b)
   b[[3,4]] = Piece.new([3,4],:red, b)
   # b[[5,6]] = Piece.new([5,6],:red, b)
-  b.render
+  b.show
   gets
   # p b.perform_moves([[0,3],[1,4],[2,3],[3,2]])
   p b.perform_moves([[0,1],[2,3],[4,5]])
-  b.render
+  b.show
 end
