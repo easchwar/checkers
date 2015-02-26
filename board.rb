@@ -69,8 +69,17 @@ class Board
   end
 
   def populate_board
-    self[[1,1]] = Piece.new([1,1], :red, self)
-    self[[2,2]] = Piece.new([2,2], :black, self)
+    (0...3).each do |x|
+      (0...8).each do |y|
+        self[[x, y]] = Piece.new([x, y], :black, self) if (x + y).odd?
+      end
+    end
+
+    (5...8).each do |x|
+      (0...8).each do |y|
+        self[[x, y]] = Piece.new([x, y], :red, self) if (x + y).odd?
+      end
+    end
   end
 end
 

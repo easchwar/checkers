@@ -2,8 +2,8 @@ require 'colorize'
 require 'byebug'
 
 class Piece
-  MOVES = { red:   [[1, 1], [1, -1]],
-            black: [[-1, 1], [-1, -1]],
+  MOVES = { black:   [[1, 1], [1, -1]],
+            red: [[-1, 1], [-1, -1]],
             king:  [[1, 1], [1, -1], [-1, 1], [-1, -1]]}
 
   attr_accessor :pos, :board
