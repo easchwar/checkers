@@ -1,2 +1,4 @@
 Checkers
 ========
+Plays checkers
+---------------
