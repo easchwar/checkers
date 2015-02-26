@@ -1,14 +1,12 @@
-require_relative './errors'
-require_relative './piece'
 require 'colorize'
 
 class Board
   BOARD_SIZE = 8
   BACKGROUND = [:white, :light_white]
 
-  def initialize(populate = true)
+  def initialize(populate = true, in_test = true)
     @grid = Array.new(size) { Array.new(size) }
-    populate_board if populate
+    populate_board(in_test) if populate
   end
 
   def [](pos)
@@ -27,20 +25,42 @@ class Board
     pos.all? { |x| x.between?(0, size - 1) }
   end
 
-  def slide_piece(start_pos, end_pos)
-    unless self[start_pos].slide_moves.include?(end_pos)
+  def pieces
+    @grid.flatten.compact
+  end
+
+  def win?(color)
+    pieces.all? { |piece| piece.color == color }
+  end
+
+  def over?
+    win?(:red) || win?(:black)
+  end
+
+  def move_piece(start_pos, end_pos)
+    raise MoveError.new("No piece there") if empty?(start_pos)
+    piece = self[start_pos]
+
+    if piece.is_slide?(end_pos)
+      slide_piece(start_pos, end_pos)
+    elsif piece.is_jump?(end_pos)
+      jump_piece(start_pos, end_pos)
+    else
       raise MoveError.new("Illegal Move")
     end
+
+    self[end_pos].king_me if self[end_pos].can_promote?
+  end
+
+  def slide_piece(start_pos, end_pos)
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[end_pos].pos = end_pos
   end
 
-  def jump_piece(start_pos, jump_pos)
-    unless self[start_pos].jump_moves.include?(jump_pos)
-      raise MoveError.new("Illegal Jump")
-    end
-    end_pos = Piece.sum(jump_pos, Piece.subtract(jump_pos,start_pos))
+  def jump_piece(start_pos, end_pos)
+    delta = Piece.times(Piece.subtract(end_pos, start_pos), 0.5)
+    jump_pos = Piece.sum(start_pos, delta)
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[jump_pos] = nil
@@ -68,7 +88,13 @@ class Board
     puts render_string
   end
 
-  def populate_board
+  def populate_board(in_test)
+    if in_test
+      self[[1,2]] = Piece.new([1,2], :red, self)
+      self[[0,3]] = Piece.new([0,3], :black, self)
+      return
+    end
+
     (0...3).each do |x|
       (0...8).each do |y|
         self[[x, y]] = Piece.new([x, y], :black, self) if (x + y).odd?

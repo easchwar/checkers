@@ -5,6 +5,7 @@ class Piece
   MOVES = { black:   [[1, 1], [1, -1]],
             red: [[-1, 1], [-1, -1]],
             king:  [[1, 1], [1, -1], [-1, 1], [-1, -1]]}
+  BACK_ROW = { black: 7, red: 0 }
 
   attr_accessor :pos, :board
   attr_reader :color
@@ -19,7 +20,7 @@ class Piece
   end
 
   def self.times(delta, multiplier)
-    delta.map { |el| el* multiplier }
+    delta.map { |el| (el* multiplier).to_i }
   end
 
   def initialize(pos, color, board, king = false)
@@ -34,6 +35,19 @@ class Piece
   end
 
   def moves
+    { jump: jump_moves, slide: slide_moves }
+  end
+
+  def has_move?
+    !moves.all? { |k, v| v.empty? }
+  end
+
+  def is_slide?(end_pos)
+    slide_moves.include?(end_pos)
+  end
+
+  def is_jump?(end_pos)
+    jump_moves.include?(end_pos)
   end
 
   def slide_moves
@@ -48,7 +62,7 @@ class Piece
     jumps = []
     move_deltas.each do |delta|
       if legal_jump?(delta)
-       jumps << Piece.sum(pos, delta)
+       jumps << Piece.sum(pos, Piece.times(delta, 2))
       end
     end
     jumps
@@ -57,16 +71,20 @@ class Piece
   def legal_jump?(delta)
     jump_pos = Piece.sum(pos, delta)
     land_pos = Piece.sum(jump_pos, delta)
-    board.on_board?(jump_pos) && !board.empty?(jump_pos) &&
-     board[jump_pos].color != color && board.on_board?(land_pos) &&
-     board.empty?(land_pos)
+    board.on_board?(land_pos) && board.empty?(land_pos) &&
+      !board.empty?(jump_pos) && board[jump_pos].color != color
   end
 
   def symbol
-    "@".colorize(color)
+    king? ? "K".colorize(color) : "@".colorize(color)
   end
 
-  def promote?
+  def can_promote?
+    pos[0] == BACK_ROW[color] && !king?
+  end
+
+  def king_me
+    @king = true
   end
 
   private
