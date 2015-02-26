@@ -3,7 +3,7 @@ require 'byebug'
 
 class Piece
   MOVES = { red:   [[1, 1], [1, -1]],
-            black: [[-1, 1], [1, 1]],
+            black: [[-1, 1], [-1, -1]],
             king:  [[1, 1], [1, -1], [-1, 1], [-1, -1]]}
 
   attr_accessor :pos, :board
@@ -14,22 +14,50 @@ class Piece
     [pos[0] + delta[0], pos[1] + delta[1]]
   end
 
-  def initialize(pos, color, board)
+  def self.times(delta, multiplier)
+    delta.map { |el| el* multiplier }
+  end
+
+  def initialize(pos, color, board, king = false)
     @pos = pos
     @board = board
     @color = color
-    @king = false
+    @king = king
   end
 
   def king?
     @king
   end
 
-  def slide(delta)
-    self.pos = Piece.sum(pos, delta)
+  def moves
   end
 
-  def jump(delta)
+  def slide_moves
+    slides = move_deltas.map { |delta| Piece.sum(pos, delta) }
+
+    slides.select do |move|
+      board.on_board?(move) && board.empty?(move)
+    end
+  end
+
+  def jump_moves
+    jumps = []
+    move_deltas.each do |delta|
+      legal_jump?(delta)
+      unless board.empty?(Piece.sum(pos, delta)) ||
+             board[Piece.sum(pos, delta)].color == color
+       jumps << Piece.sum(pos, delta)
+      end
+    end
+    jumps
+  end
+
+  def legal_jump?(delta)
+    jump_pos = Piece.sum(pos, delta)
+    land_pos = Piece.sum(jump_pos, delta)
+    board.on_board?(jump_pos) && !board.empty?(jump_pos) &&
+     board[jump_pos].color != color && board.on_board?(land_pos) &&
+     board.empty?(land_pos)
   end
 
   def symbol
@@ -42,6 +70,6 @@ class Piece
   private
 
   def move_deltas
-    king? ? MOVES(:king) : MOVES(color)
+    king? ? MOVES[:king] : MOVES[color]
   end
 end

@@ -22,10 +22,21 @@ class Board
     self[pos].nil?
   end
 
-  def slide_piece(start_pos, end_pos)
+  def on_board?(pos)
+    pos.all? { |x| x.between?(0, size - 1) }
   end
 
-  def jump_piece(start_pos, end_pos)
+  def slide_piece(start_pos, end_pos)
+    self[end_pos] = self[start_pos]
+    self[start_pos] = nil
+    self[end_pos].pos = end_pos
+  end
+
+  def jump_piece(start_pos, jump_pos, end_pos)
+    self[end_pos] = self[start_pos]
+    self[start_pos] = nil
+    self[jump_pos] = nil
+    self[end_pos].pos = end_pos
   end
 
   def size
@@ -48,5 +59,18 @@ class Board
 
   def populate_board
     self[[0,0]] = Piece.new([0,0], :red, self)
+    self[[1,1]] = Piece.new([1,1], :black, self)
   end
+end
+
+
+if __FILE__ == $PROGRAM_NAME
+  b = Board.new
+  b.render
+  puts ""
+  b.jump_piece([0,0],[1,1],[2,2])
+  b.render
+  puts ""
+  b.slide_piece([2,2],[3,1])
+  b.render
 end
