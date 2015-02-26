@@ -40,6 +40,14 @@ class Board
   end
 
   def perform_moves(move_seq)
+    if valid_move_seq?(move_seq)
+      perform_moves!(move_seq)
+    else
+      raise MoveError.new("Invalid move sequence")
+    end
+  end
+
+  def perform_moves!(move_seq)
     raise MoveError.new("Invalid move sequence") if move_seq.length < 2
 
     if move_seq.length == 2
@@ -56,6 +64,16 @@ class Board
 
       jump_piece(move_seq[idx], move_seq[idx + 1])
     end
+  end
+
+  def valid_move_seq?(move_seq)
+    begin
+      new_board = self.dup
+      new_board.perform_moves!(move_seq)
+    rescue MoveError
+      return false
+    end
+    true
   end
 
   def move_piece(start_pos, end_pos)
@@ -88,6 +106,15 @@ class Board
     self[end_pos].pos = end_pos
   end
 
+  def dup
+    new_board = Board.new(false)
+    pieces.each do |piece|
+      new_piece = Piece.new(piece.pos.dup, piece.color, new_board, piece.king?)
+      new_board[piece.pos.dup] = new_piece
+    end
+    new_board
+  end
+
   def size
     BOARD_SIZE
   end
@@ -110,21 +137,10 @@ class Board
   end
 
   def populate_board(in_test)
-    if in_test
-      self[[1,2]] = Piece.new([1,2], :red, self)
-      self[[0,3]] = Piece.new([0,3], :black, self)
-      return
-    end
-
     (0...3).each do |x|
       (0...8).each do |y|
         self[[x, y]] = Piece.new([x, y], :black, self) if (x + y).odd?
-      end
-    end
-
-    (5...8).each do |x|
-      (0...8).each do |y|
-        self[[x, y]] = Piece.new([x, y], :red, self) if (x + y).odd?
+        self[[x + 5, y]] = Piece.new([x + 5, y], :red, self) if (x + 5 + y).odd?
       end
     end
   end
@@ -139,6 +155,7 @@ if __FILE__ == $PROGRAM_NAME
   b[[3,4]] = Piece.new([3,4],:red, b)
   # b[[5,6]] = Piece.new([5,6],:red, b)
   b.render
+  gets
   # p b.perform_moves([[0,3],[1,4],[2,3],[3,2]])
   p b.perform_moves([[0,1],[2,3],[4,5]])
   b.render
