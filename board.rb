@@ -1,10 +1,12 @@
+require_relative './piece'
+require_relative './errors'
 require 'colorize'
 
 class Board
   BOARD_SIZE = 8
   BACKGROUND = [:white, :light_white]
 
-  def initialize(populate = true, in_test = true)
+  def initialize(populate = true, in_test = false)
     @grid = Array.new(size) { Array.new(size) }
     populate_board(in_test) if populate
   end
@@ -35,6 +37,25 @@ class Board
 
   def over?
     win?(:red) || win?(:black)
+  end
+
+  def perform_moves(move_seq)
+    raise MoveError.new("Invalid move sequence") if move_seq.length < 2
+
+    if move_seq.length == 2
+      move_piece(move_seq.first, move_seq.last)
+      return
+    end
+
+    move_seq.each_index do |idx|
+      next if idx == move_seq.length - 1
+
+      unless self[move_seq[idx]].is_jump?(move_seq[idx + 1])
+        raise MoveError.new("Illegal jump in move sequence")
+      end
+
+      jump_piece(move_seq[idx], move_seq[idx + 1])
+    end
   end
 
   def move_piece(start_pos, end_pos)
@@ -111,12 +132,14 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-  b = Board.new
+  b = Board.new(false)
+  b[[0,1]] = Piece.new([0,1],:black, b)
+  b[[1,2]] = Piece.new([1,2],:red, b)
+  # b[[2,3]] = Piece.new([2,3],:red, b)
+  b[[3,4]] = Piece.new([3,4],:red, b)
+  # b[[5,6]] = Piece.new([5,6],:red, b)
   b.render
-  puts ""
-  b.jump_piece([0,0],[1,1],[2,2])
-  b.render
-  puts ""
-  b.slide_piece([2,2],[3,1])
+  # p b.perform_moves([[0,3],[1,4],[2,3],[3,2]])
+  p b.perform_moves([[0,1],[2,3],[4,5]])
   b.render
 end

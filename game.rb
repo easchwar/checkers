@@ -5,8 +5,8 @@ require_relative './player'
 
 class Game
 
-  def initialize(red, black)
-    @board = Board.new(true, true)
+  def initialize(board, red, black)
+    @board = board
     @players = { red: red, black: black}
     @turn = :red
   end
@@ -31,6 +31,7 @@ end
 if __FILE__ == $PROGRAM_NAME
   black = Player.new(:black)
   red = Player.new(:red)
-  g = Game.new(red, black)
+  board = Board.new(true)
+  g = Game.new(board, red, black)
   g.play
 end
