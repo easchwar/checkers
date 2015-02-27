@@ -19,8 +19,9 @@ class Player
   end
 
   def get_move(board)
-    puts "#{@color}, select piece to move: "
-    start_pos = get_input
+    puts "#{@color}, select a move sequence: "
+    sequence = get_input
+    start_pos = sequence.first
 
     raise MoveError.new("No piece present") if board.empty?(start_pos)
 
@@ -28,23 +29,35 @@ class Player
       raise MoveError.new("Wrong color piece")
     end
 
-    puts "#{@color}, select destination: "
-    end_pos = get_input
-
-    [start_pos,end_pos]
+    sequence
   end
 
   def get_input
     input = gets.chomp.split(/[, ]+/)
 
-    unless input.length == 2 && input.all? { |idx| idx.match(/[0-7]/)}
+    unless input.all? { |idx| idx.match(/[0-7]/)}
       raise ParsingError.new("Input two comma separated indices between 0-7")
     end
 
-    input.map(&:to_i)
+    if input.length.odd? raise ParsingError.new("Invalid input string")
+
+    collect_indices(input)
   end
 
-  def make_move(move, board)
-    board.move_piece(move[0],move[1])
+  def collect_indices(input)
+    indices = []
+    temp = []
+    input.each_index do |i|
+      temp << input[i].to_i
+      if i.odd?
+        indices << temp
+        temp = []
+      end
+    end
+    indices
+  end
+
+  def make_move(sequence, board)
+    board.perform_moves(sequence)
   end
 end
