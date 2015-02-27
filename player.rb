@@ -39,7 +39,7 @@ class Player
       raise ParsingError.new("Input two comma separated indices between 0-7")
     end
 
-    raise ParsingError.new("Invalid input string") if input.length.odd? 
+    raise ParsingError.new("Invalid input string") if input.length.odd?
 
     collect_indices(input)
   end

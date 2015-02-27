@@ -30,9 +30,11 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-  black = DummyPlayer.new(:black)
-  red = DummyPlayer.new(:red)
-  board = Board.new(true)
+  black = Player.new(:black)
+  red = Player.new(:red)
+  board = Board.new(false)
+  board[[0,1]] = Piece.new([0,1], :red, board, true)
+  board[[1,2]] = Piece.new([1,2], :black, board, true)
   g = Game.new(board, red, black)
   g.play
 end
