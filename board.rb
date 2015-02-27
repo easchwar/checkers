@@ -125,11 +125,8 @@ class Board
 
   def show(special_colorize = [],cursor = [])
     system('clear')
-    render_string = "  "
-    render_string << ("0".."7").to_a.join(" ")
-    render_string << "\n"
+    render_string = ""
     @grid.each_with_index do |row, row_idx|
-      render_string << "#{row_idx} "
       row.each_index do |col_idx|
         render_string << render_helper([row_idx, col_idx], special_colorize, cursor)
       end
