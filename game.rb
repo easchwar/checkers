@@ -31,15 +31,15 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-  black = Player.new(:black)
-  red = Player.new(:red)
-  board = Board.new(false)
-  board[[1,2]] = Piece.new([1,2], :black, board, false)
-  board[[3,4]] = Piece.new([3,4], :black, board, false)
-  board[[3,2]] = Piece.new([3,2], :black, board, false)
-  board[[5,4]] = Piece.new([5,4], :black, board, false)
-  board[[5,2]] = Piece.new([5,2], :black, board, false)
-  board[[4,5]] = Piece.new([4,5], :red, board, true)
+  black = DummyPlayer.new(:black)
+  red = DummyPlayer.new(:red)
+  board = Board.new
+  # board[[1,2]] = Piece.new([1,2], :black, board, false)
+  # board[[3,4]] = Piece.new([3,4], :black, board, false)
+  # board[[3,2]] = Piece.new([3,2], :black, board, false)
+  # board[[5,4]] = Piece.new([5,4], :black, board, false)
+  # board[[5,2]] = Piece.new([5,2], :black, board, false)
+  # board[[4,5]] = Piece.new([4,5], :red, board, true)
   g = Game.new(board, red, black)
   g.play
 end

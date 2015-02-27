@@ -5,24 +5,35 @@ class DummyPlayer
   end
 
   def play_turn(board)
-    i = 0
     begin
-      i += 1
       color_pieces = board.pieces.select { |piece| piece.color == @color }
-      moves = [color_pieces.sample.pos]
-      # debugger
-      num_moves = rand(1..2)
-      num_moves.times do |move|
-        moves << [rand(0...8), rand(0...8)]
+      moves = []
+
+      color_pieces.shufle.each do |piece|
+        if !piece.jump_moves.empty?
+          moves << piece.pos
+          moves << piece.jump_moves.first
+          break
+        end
       end
-      # debugger
+
+      if moves.empty?
+        color_pieces.shuffle.each do |piece|
+          if !piece.slide_moves.empty?
+            moves << piece.pos
+            moves <<piece.slide_moves.sample
+            break
+          end
+        end
+      end
+
       if board.empty?(moves.first) || board[moves.first].color != @color
         raise "whoops"
       end
       board.perform_moves(moves)
-    rescue
-      retry if i < 10000
-      puts "too many tries"
+    rescue => e
+      retry if i < 100
+      puts e
     end
     sleep(2)
   end

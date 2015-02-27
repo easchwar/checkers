@@ -6,9 +6,9 @@ class Board
   BOARD_SIZE = 8
   BACKGROUND = [:white, :light_white]
 
-  def initialize(populate = true, in_test = false)
+  def initialize(populate = true)
     @grid = Array.new(size) { Array.new(size) }
-    populate_board(in_test) if populate
+    populate_board if populate
   end
 
   def [](pos)
@@ -150,7 +150,7 @@ class Board
     end
   end
 
-  def populate_board(in_test)
+  def populate_board
     (0...3).each do |x|
       (0...8).each do |y|
         self[[x, y]] = Piece.new([x, y], :black, self) if (x + y).odd?
