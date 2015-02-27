@@ -3,6 +3,7 @@ require_relative './piece'
 require_relative './board'
 require_relative './player'
 require_relative './dummy_player'
+require_relative './player_input'
 
 class Game
 

@@ -76,7 +76,7 @@ class Piece
   end
 
   def symbol
-    king? ? "K".colorize(color) : "@".colorize(color)
+    king? ? "⛃".colorize(color) : "⛂".colorize(color)
   end
 
   def can_promote?
