@@ -23,8 +23,8 @@ class PlayerInput
 
   # oringal case statement from:
   # http://www.alecjacobson.com/weblog/?p=75
-  def self.keyboard_input(pos)
-    arr = pos.dup
+  def self.keyboard_input(board)
+    arr = [0,0]
     move_seq = []
     loop do
       c = PlayerInput.read_char
@@ -35,7 +35,7 @@ class PlayerInput
       when "\r" # return
         return move_seq
       when "\e" # escape
-        return nil
+        move_seq = []
       when "\e[A" # up arrow
         # cursor up (if possible)
         arr[0] -= 1 if arr[0] > 0
@@ -52,6 +52,8 @@ class PlayerInput
         # exits program
         exit 0
       end
+      board.show(move_seq, arr)
+      puts "#{move_seq.length - 1} moves selected" if move_seq.length > 1
     end
     raise RuntimeError.new("why are you here")
   end

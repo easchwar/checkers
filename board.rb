@@ -95,6 +95,8 @@ class Board
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[end_pos].pos = end_pos
+
+    self[end_pos].king_me if self[end_pos].can_promote?
   end
 
   def jump_piece(start_pos, end_pos)
@@ -104,6 +106,8 @@ class Board
     self[start_pos] = nil
     self[jump_pos] = nil
     self[end_pos].pos = end_pos
+
+    self[end_pos].king_me if self[end_pos].can_promote?
   end
 
   def dup
@@ -119,21 +123,31 @@ class Board
     BOARD_SIZE
   end
 
-  def show
+  def show(special_colorize = [],cursor = [])
+    system('clear')
     render_string = "  "
     render_string << ("0".."7").to_a.join(" ")
     render_string << "\n"
     @grid.each_with_index do |row, row_idx|
       render_string << "#{row_idx} "
       row.each_index do |col_idx|
-        pos = [row_idx, col_idx]
-        output = (empty?(pos) ? "  " : self[pos].symbol + " ")
-        bg_idx = (pos[0] + pos[1]) % 2
-        render_string << output.colorize(:background => BACKGROUND[bg_idx])
+        render_string << render_helper([row_idx, col_idx], special_colorize, cursor)
       end
       render_string << "\n"
     end
     puts render_string
+  end
+
+  def render_helper(pos, special, cursor)
+    output = (empty?(pos) ? "  " : self[pos].symbol + " ")
+    bg_idx = (pos[0] + pos[1]) % 2
+    if cursor == pos
+      output.colorize(:background => :light_cyan)
+    elsif special.include?(pos)
+      output.colorize(:background => :light_yellow)
+    else
+      output.colorize(:background => BACKGROUND[bg_idx])
+    end
   end
 
   def populate_board(in_test)

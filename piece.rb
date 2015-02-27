@@ -34,10 +34,6 @@ class Piece
     @king
   end
 
-  def moves
-    { jump: jump_moves, slide: slide_moves }
-  end
-
   def has_move?
     !moves.all? { |k, v| v.empty? }
   end
