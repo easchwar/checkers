@@ -9,7 +9,7 @@ class DummyPlayer
       color_pieces = board.pieces.select { |piece| piece.color == @color }
       moves = []
 
-      color_pieces.shufle.each do |piece|
+      color_pieces.shuffle.each do |piece|
         if !piece.jump_moves.empty?
           moves << piece.pos
           moves << piece.jump_moves.first
