@@ -2,6 +2,7 @@ require_relative './errors'
 require_relative './piece'
 require_relative './board'
 require_relative './player'
+require_relative './dummy_player'
 
 class Game
 
@@ -29,8 +30,8 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-  black = Player.new(:black)
-  red = Player.new(:red)
+  black = DummyPlayer.new(:black)
+  red = DummyPlayer.new(:red)
   board = Board.new(true)
   g = Game.new(board, red, black)
   g.play
